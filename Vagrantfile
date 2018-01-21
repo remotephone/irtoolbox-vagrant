@@ -1,4 +1,5 @@
-et ft=ruby :
+# -*- mode: ruby -*-
+# # vi: set ft=ruby :
 
 ### REQUIREMENTS ###
 # You need to install vagrant plugins vagrant-disksize and vagrant-reload for this to work
