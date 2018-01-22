@@ -10,6 +10,8 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
+
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -24,8 +26,10 @@ Vagrant.configure("2") do |config|
 
   # Configure Virtualbox to user host DNS servers
   config.vm.provider "virtualbox" do |vb, override|
+    
   # resolve DNS requests through NAT'ing
   vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    
   #  From https://github.com/clong/DetectionLab/blob/master/Vagrant/Vagrantfile with mods
   vb.customize ["modifyvm", :id, "--memory", 4096]
   vb.customize ["modifyvm", :id, "--cpus", 2]
@@ -45,6 +49,7 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
+  # Forward SSH and ports for CyberChef/Splunk to localhost only
   config.vm.network "forwarded_port", id: 'ssh', guest: 22, host: 2222, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 8000, host: 8001, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 8888, host: 8002, host_ip: "127.0.0.1"
@@ -77,15 +82,17 @@ Vagrant.configure("2") do |config|
   # View the documentation for the provider you are using for more
   # information on available options.
  
- ## DEFAULT USER CONFIGURATION
- ## Once the box is built, this password needs to be changed
-  config.ssh.username = "ubuntu"
-  config.ssh.password = "ubuntu"
+  ## This doesn't work with the current base image.
+  ## DEFAULT USER CONFIGURATION
+  ## Once the box is built, this password needs to be changed
+  ## config.ssh.username = "ubuntu"
+  ## config.ssh.password = "ubuntu"
   
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
 
+  # Update all files, install some required files and docker, awscli, enable docker at boot, add user ubuntu to group, and clone splunk-docker
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
     sudo apt-get upgrade -y
@@ -99,8 +106,11 @@ Vagrant.configure("2") do |config|
     git clone https://github.com/remotephone/docker-splunk.git /home/ubuntu/gits/docker-splunk/
   SHELL
 
+  # Reboot VM So user/group changes take effect.
+
   config.vm.provision :reload
   
+  # Build docker container 
   config.vm.provision "shell", inline: <<-SHELL
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
   SHELL
