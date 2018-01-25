@@ -119,7 +119,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     git clone https://github.com/splunk/docker-splunk.git /home/ubuntu/gits/docker-splunk/
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
-  SHELL    
+  SHELL
 
   end
 end
