@@ -116,50 +116,10 @@ Vagrant.configure("2") do |config|
     git clone https://github.com/jesparza/peepdf.git
   SHELL
 
-
-# I don't have a good way to get repositories from our local gitlab
-# From here: https://github.com/hashicorp/vagrant/issues/2662
-# This might be an option...
-
-=begin
-    class Username
-        def to_s
-            print "Virtual machine needs you proxy user and password.\n"
-            print "Username: " 
-            STDIN.gets.chomp
-        end
-    end
-    
-    class Password
-        def to_s
-            begin
-            system 'stty -echo'
-            print "Password: "
-            pass = URI.escape(STDIN.gets.chomp)
-            ensure
-            system 'stty echo'
-            end
-            pass
-        end
-    end
-=end
-
-
-# If you trust me (I wouldn't) you can clone my repository
-=begin
-  config.vm.provision "shell", inline: <<-SHELL
-    git clone https://github.com/remotephone/docker-splunk.git /home/ubuntu/gits/docker-splunk/
-    docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
-  SHELL    
-=end
-
-# You can also simply clone the splunk repo, build their dockerfile, and then make the changes yourself to enable HTTPS and minimize free space required
-=begin
   config.vm.provision "shell", inline: <<-SHELL
     git clone https://github.com/splunk/docker-splunk.git /home/ubuntu/gits/docker-splunk/
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
   SHELL    
-=end
 
   end
 end
