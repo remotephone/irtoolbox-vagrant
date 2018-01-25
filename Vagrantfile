@@ -163,7 +163,3 @@ Vagrant.configure("2") do |config|
 
   end
 end
-
-
-                                      X
-sed 's/&& rm -rf \/var\/lib\/apt\/lists\/\*/&& rm -rf \/var\/lib\/apt\/lists\/\* && sed -i -e "s\/minFreeSpace = 5000\/minFreeSpace = 500" \/var\/opt\/splunk\/etc\/system\/default\/server.conf && sed -i -e 's/enableSplunkWebSSL = false/enableSplunkWebSSL = true/' \/var\/opt\/splunk\/etc\/system\/default\/web\.conf\'/g' /home/ubuntu/gits/docker-splunk/enterprise/Dockerfile
