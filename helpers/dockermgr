@@ -1,8 +1,9 @@
 #!/bin/bash
 
 usage () {
-        echo "Usage: $0 <containers|images|all>"
-        echo "  containers - removes stopped docker containers"
+	echo "Usage: $0 <stop|containers|images|all>"
+	echo "  stop       - stops running and created docker containers"
+	echo "  containers - removes stopped docker containers"
         echo "  images     - removes unnamed docker images"
         echo "  all        - all of the above"
         echo "  help       - prints this message"
@@ -18,7 +19,7 @@ stop_containers () {
 }
 		
 remove_containers () {
-        CONTAINERS=$(docker ps -a|awk '/Exited /{printf("%s ", $1)}')
+	CONTAINERS=$(docker ps -a|awk '/Exited |Created /{printf("%s ", $1)}')
         if [[ -z $CONTAINERS ]]  ; then
                 echo "no inactive containers found"
         else
@@ -51,7 +52,8 @@ case $1 in
                 remove_images
                 ;;
         all)
-                remove_containers
+                stop_containers
+		remove_containers
                 remove_images
                 ;;
-"wow.sh"
+esac
