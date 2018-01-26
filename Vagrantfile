@@ -102,8 +102,6 @@ Vagrant.configure("2") do |config|
 
 
   # Get all your repositories and build some containers
-  # Two of these repostiories belong to me, I don't know a good way to let this vagrant box access our gitlab
-  # I a
   config.vm.provision "shell", inline: <<-SHELL
     sudo su ubuntu
     mkdir -p /home/ubuntu/gits/
@@ -116,6 +114,7 @@ Vagrant.configure("2") do |config|
     git clone https://github.com/jesparza/peepdf.git
   SHELL
 
+  # Configure splunk
   config.vm.provision "shell", inline: <<-SHELL
     git clone https://github.com/splunk/docker-splunk.git /home/ubuntu/gits/docker-splunk/
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
