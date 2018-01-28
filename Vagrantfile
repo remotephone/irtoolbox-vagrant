@@ -71,23 +71,23 @@ Vagrant.configure("2") do |config|
   # Update all files, install some required files and docker, awscli, enable docker at boot, add user ubuntu to group, and clone splunk-docker
   # Update the system
 
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL1
 
     sudo apt-get update
     sudo apt-get upgrade -y
-  SHELL
+  SHELL1
 
   # Install some required pacakges
 
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL2
     sudo apt-get install apt-transport-https ca-certificates software-properties-common whois curl lynx autoconf bzip2 dnsutils p7zip-full git libgtk2.0-dev virtualenv python-dev python3-dev python-pip libffi-dev libssl-dev nmap linux-image-extra-$(uname -r) -y
     sudo update-ca-certificates
     pip install awscli
-  SHELL
+  SHELL2
 
   # Install docker
 
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL3
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo apt-get update
@@ -95,14 +95,14 @@ Vagrant.configure("2") do |config|
     sudo usermod -aG docker ubuntu
     sudo systemctl start docker
     sudo systemctl enable docker
-  SHELL
+  SHELL3
 
   # Reboot VM So user/group changes take effect.
   config.vm.provision :reload
 
 
   # Get all your repositories and build some containers
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL4
     sudo su ubuntu
     mkdir -p /home/ubuntu/gits/
     cd /home/ubuntu/gits
@@ -112,13 +112,13 @@ Vagrant.configure("2") do |config|
     find /home/ubuntu/gits -name requirements.txt -exec pip install -r {} ';'
     git clone https://github.com/Neo23x0/yarGen.git
     git clone https://github.com/jesparza/peepdf.git
-  SHELL
+  SHELL4
 
   # Configure splunk
-  config.vm.provision "shell", inline: <<-SHELL
+  config.vm.provision "shell", inline: <<-SHELL5
     git clone https://github.com/splunk/docker-splunk.git /home/ubuntu/gits/docker-splunk/
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
-  SHELL
+  SHELL5
 
   end
 end
