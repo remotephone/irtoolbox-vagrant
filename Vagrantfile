@@ -61,7 +61,10 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder "./helpers", "/home/ubuntu/helpers", :mount_options => ["ro"],
+    owner: "ubuntu", group: "ubuntu"
+
 
   
   # Enable provisioning with a shell script. Additional provisioners such as
@@ -71,23 +74,12 @@ Vagrant.configure("2") do |config|
   # Update all files, install some required files and docker, awscli, enable docker at boot, add user ubuntu to group, and clone splunk-docker
   # Update the system
 
-  config.vm.provision "shell", inline: <<-SHELL1
-
+  config.vm.provision "shell", inline: <<-DOCKER
     sudo apt-get update
     sudo apt-get upgrade -y
-  SHELL1
-
-  # Install some required pacakges
-
-  config.vm.provision "shell", inline: <<-SHELL2
     sudo apt-get install apt-transport-https ca-certificates software-properties-common whois curl lynx autoconf bzip2 dnsutils p7zip-full git libgtk2.0-dev virtualenv python-dev python3-dev python-pip libffi-dev libssl-dev nmap linux-image-extra-$(uname -r) -y
     sudo update-ca-certificates
     pip install awscli
-  SHELL2
-
-  # Install docker
-
-  config.vm.provision "shell", inline: <<-SHELL3
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo apt-get update
@@ -95,14 +87,13 @@ Vagrant.configure("2") do |config|
     sudo usermod -aG docker ubuntu
     sudo systemctl start docker
     sudo systemctl enable docker
-  SHELL3
+  DOCKER
 
   # Reboot VM So user/group changes take effect.
   config.vm.provision :reload
 
-
   # Get all your repositories and build some containers
-  config.vm.provision "shell", inline: <<-SHELL4
+  config.vm.provision "shell", inline: <<-GITS
     sudo su ubuntu
     mkdir -p /home/ubuntu/gits/
     cd /home/ubuntu/gits
@@ -112,13 +103,10 @@ Vagrant.configure("2") do |config|
     find /home/ubuntu/gits -name requirements.txt -exec pip install -r {} ';'
     git clone https://github.com/Neo23x0/yarGen.git
     git clone https://github.com/jesparza/peepdf.git
-  SHELL4
-
-  # Configure splunk
-  config.vm.provision "shell", inline: <<-SHELL5
     git clone https://github.com/splunk/docker-splunk.git /home/ubuntu/gits/docker-splunk/
     docker build -t splunkminfree /home/ubuntu/gits/docker-splunk/enterprise/
-  SHELL5
+    docker build -t cyberchef /home/ubuntu/helpers/dockerfiles/cyberchef/
+  GITS
 
   end
 end
